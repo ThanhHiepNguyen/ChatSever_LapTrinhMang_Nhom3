@@ -152,6 +152,30 @@ namespace Server
             }
         }
 
+        // Gửi tin nhắn đến tất cả các client ngoại trừ client gửi
+        private async Task BroadcastAsync(string message, TcpClient excludeClient)
+        {
+            byte[] dataByte = Encoding.UTF8.GetBytes(message);
+
+            var tasks = clients
+                .Where(c => c.TcpClient != excludeClient)
+                .Select(async clientInfo =>
+                {
+                    try
+                    {
+                        await clientInfo.SslStream.WriteAsync(dataByte, 0, dataByte.Length);
+                    }
+                    catch (Exception ex)
+                    {
+                        showStatus("Client Disconnected: " + ex.Message);
+                        clientInfo.TcpClient.Close();
+                        clients = new ConcurrentBag<ClientInfo>(clients.Where(c => c != clientInfo));
+                    }
+                });
+
+            await Task.WhenAll(tasks);
+        }
+
 
 
 
