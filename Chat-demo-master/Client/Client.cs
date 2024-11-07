@@ -238,4 +238,13 @@ namespace Client
             btn_Send.Enabled = false;
             btn_connect.Enabled = true;
         }
+
+        private async void txt_Message_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Ngăn chặn tiếng "ting" khi nhấn Enter
+                btn_Send_Click(sender, e);
+            }
+        }
     }
