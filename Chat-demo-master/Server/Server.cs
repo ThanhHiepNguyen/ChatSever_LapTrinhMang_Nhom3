@@ -300,5 +300,10 @@ namespace Server
             txt_Message.Clear();
         }
     }
-
+    public class ClientInfo
+    {
+        public TcpClient TcpClient { get; set; }
+        public SslStream SslStream { get; set; }
+        public string Username { get; set; }
+    }
 }
