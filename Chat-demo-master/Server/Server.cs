@@ -75,6 +75,58 @@ namespace Server
             }
         }
 
+        // Xử lý từng client (không đồng bộ)
+        private async Task HandleClientAsync(TcpClient client)
+        {
+            string username = null;
+            try
+            {
+                using (var networkStream = client.GetStream())
+                using (var sslStream = new SslStream(networkStream, false))
+                {
+                    // Đường dẫn và pass của file chứng chỉ
+                    string certPath = "server.pfx";
+                    string certPass = "abc@123";
+                    var serverCertificate = new X509Certificate(certPath, certPass);
+                    await sslStream.AuthenticateAsServerAsync(serverCertificate, false, System.Security.Authentication.SslProtocols.Tls12, true);
+
+                    // Nhận tên người dùng từ client
+                    byte[] buffer = new byte[1024];
+                    int byteCount = await sslStream.ReadAsync(buffer, 0, buffer.Length);
+                    username = Encoding.UTF8.GetString(buffer, 0, byteCount).Trim();
+
+                    // Thêm client vào danh sách
+                    var clientInfo = new ClientInfo { TcpClient = client, SslStream = sslStream, Username = username };
+                    clients.Add(clientInfo);
+                    ShowUser("User name : " + username);
+                    showStatus(username + " đã kết nối!");
+
+                    // Gửi danh sách người dùng cho tất cả các client
+                    await SendClientListToAllAsync();
+
+                    // Xử lý tin nhắn từ client
+                    await HandleMessagesAsync(clientInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                showStatus("Error: " + ex.Message);
+            }
+            finally
+            {
+                if (username != null)
+                {
+                    // Loại bỏ client ra khỏi danh sách
+                    clients = new ConcurrentBag<ClientInfo>(clients.Where(c => c.Username != username));
+                    RemoveUser("User name : " + username);
+                    await SendClientListToAllAsync();
+                    showStatus(username + " đã ngắt kết nối.");
+                }
+
+                client.Close();
+            }
+        }
+
 
 
     }
