@@ -127,6 +127,32 @@ namespace Server
             }
         }
 
+        // Xử lý tin nhắn từ client
+        private async Task HandleMessagesAsync(ClientInfo clientInfo)
+        {
+            try
+            {
+                var sslStream = clientInfo.SslStream;
+                message = new byte[1024];
+
+                while (true)
+                {
+                    int byteRead = await sslStream.ReadAsync(message, 0, message.Length);
+                    if (byteRead == 0) break;
+
+                    string receivedMessage = Encoding.UTF8.GetString(message, 0, byteRead);
+                    ShowMessage(clientInfo.Username + ": " + receivedMessage);
+
+                    await BroadcastAsync(clientInfo.Username + ": " + receivedMessage, clientInfo.TcpClient);
+                }
+            }
+            catch (Exception ex)
+            {
+                showStatus("Error: " + ex.Message);
+            }
+        }
+
+
 
 
     }
