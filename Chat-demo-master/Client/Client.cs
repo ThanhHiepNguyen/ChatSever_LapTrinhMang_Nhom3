@@ -53,4 +53,44 @@ namespace Client
             username = txt_username.Text;
             return true;
         }
+
+        //kết nối với server
+        private async Task Connect()
+        {
+            try
+            {
+                // Kiểm tra khung nhập dữ liệu
+                if (!CheckInputs(out IPAddress ip, out int port, out string username)) return;
+
+                _client = new TcpClient();
+                await _client.ConnectAsync(ip, port);
+
+                showStatus("Đã kết nối đến server");
+
+                NetworkStream networkStream = _client.GetStream();
+
+                _sslStream = new SslStream(networkStream, false, ValidateServerCertificate, null);
+
+                try
+                {
+                    await _sslStream.AuthenticateAsClientAsync(ip.ToString());
+                }
+                catch (Exception ex)
+                {
+                    showStatus($"Xác thực thất bại: {ex.Message}");
+                    return;
+                }
+
+                // Gửi tên người dùng ngay khi kết nối
+                byte[] byte_user = Encoding.UTF8.GetBytes(username);
+                await _sslStream.WriteAsync(byte_user, 0, byte_user.Length);
+
+                _ = Task.Run(() => ReceiveMessagesAsync(_sslStream));
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Lỗi khi kết nối: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
