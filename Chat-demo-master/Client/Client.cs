@@ -167,4 +167,25 @@ namespace Client
                 }
             });
         }
+        private void ShowMessage(string message)
+        {
+            InvokeIfRequired(listbox_result, () => listbox_result.Items.Add(message));
+        }
+
+        private void showStatus(string message)
+        {
+            InvokeIfRequired(txt_status, () => txt_status.Text = message + Environment.NewLine + txt_status.Text);
+        }
+
+        private void InvokeIfRequired(Control control, Action action)
+        {
+            if (control.InvokeRequired)
+            {
+                control.Invoke(action);
+            }
+            else
+            {
+                action();
+            }
+        }
     }
