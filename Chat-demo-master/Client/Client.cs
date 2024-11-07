@@ -221,4 +221,21 @@ namespace Client
                 MessageBox.Show("Vui lòng nhập tin nhắn trước khi gửi", "Thông báo *_*", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private async void btn_connect_Click(object sender, EventArgs e)
+        {
+            await Connect();
+            txt_Message.Enabled = true;
+            btn_disconnect.Enabled = true;
+            btn_Send.Enabled = true;
+            btn_connect.Enabled = false;
+        }
+
+        private void btn_disconnect_Click(object sender, EventArgs e)
+        {
+            Disconnect();
+            txt_Message.Enabled = false;
+            btn_disconnect.Enabled = false;
+            btn_Send.Enabled = false;
+            btn_connect.Enabled = true;
+        }
     }
