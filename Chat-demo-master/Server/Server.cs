@@ -272,9 +272,33 @@ namespace Server
                 txt_status.Text = message + Environment.NewLine + txt_status.Text;
             }
         }
+        // Start server - Click
+        private async void btn_StartServer_Click(object sender, EventArgs e)
+        {
+            await Start_Server();
+        }
 
+        // Stop server - Click
+        private void btn_StopServer_Click(object sender, EventArgs e)
+        {
+            Stop_Server();
+            this.Close();
+        }
 
+        // Send message - Click
+        private async void btn_Send_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txt_Message.Text))
+            {
+                MessageBox.Show("Vui lòng nhập tin nhắn!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-
+            string message = "Server: " + txt_Message.Text;
+            await BroadcastAsync(message, null);
+            ShowMessage("Tôi gửi: " + txt_Message.Text);
+            txt_Message.Clear();
+        }
     }
+
 }
