@@ -147,4 +147,10 @@ namespace Client
                 MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            // Chấp nhận tất cả chứng chỉ, bạn có thể thay đổi tùy theo nhu cầu
+            return true;
+        }
     }
