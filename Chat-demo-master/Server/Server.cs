@@ -53,6 +53,27 @@ namespace Server
                 txt_IPAddress.Text = wifiIP.ToString();
             }
         }
+        // Khởi động server (không đồng bộ)
+        public async Task Start_Server()
+        {
+            int port = 9999;
+
+            server = new TcpListener(IPAddress.Any, port);
+            server.Start();
+            ShowWifiIPAddress();
+            showStatus("Server đã khởi động...");
+
+            txt_Message.Enabled = true;
+            btn_Send.Enabled = true;
+            btn_StopServer.Enabled = true;
+            btn_StartServer.Enabled = false;
+
+            while (true)
+            {
+                TcpClient client = await server.AcceptTcpClientAsync();
+                _ = HandleClientAsync(client);
+            }
+        }
 
 
 
