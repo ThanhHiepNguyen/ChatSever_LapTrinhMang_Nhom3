@@ -188,4 +188,37 @@ namespace Client
                 action();
             }
         }
+        private async void btn_Send_Click(object sender, EventArgs e)
+        {
+            if (_client == null || !_client.Connected)
+            {
+                MessageBox.Show("Chưa kết nối tới server", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (_sslStream == null)
+            {
+                MessageBox.Show("SSL stream chưa được khởi tạo", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string message = txt_Message.Text;
+            if (!string.IsNullOrEmpty(message))
+            {
+                ShowMessage($"Tôi gửi: {message}");
+                byte[] buffer = Encoding.UTF8.GetBytes(message);
+                try
+                {
+                    await _sslStream.WriteAsync(buffer, 0, buffer.Length);
+                    txt_Message.Clear();
+                }
+                catch (Exception ex)
+                {
+                    showStatus($"Gửi tin nhắn thất bại: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng nhập tin nhắn trước khi gửi", "Thông báo *_*", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
