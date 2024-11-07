@@ -93,4 +93,26 @@ namespace Client
                 MessageBox.Show($"Lỗi khi kết nối: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+        private void Disconnect()
+        {
+            if (_client != null)
+            {
+                try
+                {
+                    _sslStream?.Close();
+                    _client.Close();
+                }
+                catch (Exception ex)
+                {
+                    ShowMessage($"Lỗi khi ngắt kết nối: {ex.Message}");
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    _client = null;
+                    _sslStream = null;
+                    showStatus("Đã ngắt kết nối khỏi server");
+                }
+            }
+        }
     }
