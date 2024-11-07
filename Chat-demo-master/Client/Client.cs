@@ -153,4 +153,18 @@ namespace Client
             // Chấp nhận tất cả chứng chỉ, bạn có thể thay đổi tùy theo nhu cầu
             return true;
         }
+        private void UpdateUserList(string[] users)
+        {
+            InvokeIfRequired(listbox_User, () =>
+            {
+                listbox_User.Items.Clear();
+                foreach (string user in users)
+                {
+                    if (!string.IsNullOrWhiteSpace(user))
+                    {
+                        listbox_User.Items.Add(user);
+                    }
+                }
+            });
+        }
     }
