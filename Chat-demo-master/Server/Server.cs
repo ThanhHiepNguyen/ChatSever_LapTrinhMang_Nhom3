@@ -199,6 +199,28 @@ namespace Server
             await Task.WhenAll(tasks);
         }
 
+        // Dừng server
+        private void Stop_Server()
+        {
+            if (server != null)
+            {
+                foreach (var clientInfo in clients)
+                {
+                    clientInfo.SslStream.Close();
+                    clientInfo.TcpClient.Close();
+                }
+
+                server.Stop();
+                clients = new ConcurrentBag<ClientInfo>();
+                showStatus("Server đã ngắt kết nối.");
+
+                txt_Message.Enabled = false;
+                btn_Send.Enabled = false;
+                btn_StopServer.Enabled = false;
+                btn_StartServer.Enabled = true;
+            }
+        }
+
 
 
 
