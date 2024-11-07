@@ -221,6 +221,58 @@ namespace Server
             }
         }
 
+        // Đưa danh sách user(Client) kết nối tới server lên Ô Connect user
+        private void ShowUser(string username)
+        {
+            if (listbox_User.InvokeRequired)
+            {
+                listbox_User.Invoke(new Action(() => listbox_User.Items.Add(username)));
+            }
+            else
+            {
+                listbox_User.Items.Add(username);
+            }
+        }
+
+        // Xóa người dùng (Client) đã ngắt kết nối với user
+        private void RemoveUser(string username)
+        {
+            if (listbox_User.InvokeRequired)
+            {
+                listbox_User.Invoke(new Action(() => listbox_User.Items.Remove(username)));
+            }
+            else
+            {
+                listbox_User.Items.Remove(username);
+            }
+        }
+
+        // Đưa tin nhắn lên Ô Message
+        private void ShowMessage(string message)
+        {
+            if (listbox_result.InvokeRequired)
+            {
+                listbox_result.Invoke(new Action(() => listbox_result.Items.Add(message)));
+            }
+            else
+            {
+                listbox_result.Items.Add(message);
+            }
+        }
+
+        // Đưa thông tin về trạng thái của server lên ô trạng thái
+        public void showStatus(string message)
+        {
+            if (txt_status.InvokeRequired)
+            {
+                txt_status.Invoke(new Action(() => txt_status.Text = message + Environment.NewLine + txt_status.Text));
+            }
+            else
+            {
+                txt_status.Text = message + Environment.NewLine + txt_status.Text;
+            }
+        }
+
 
 
 
