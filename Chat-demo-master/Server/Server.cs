@@ -176,6 +176,29 @@ namespace Server
             await Task.WhenAll(tasks);
         }
 
+        // Gửi danh sách người dùng cho tất cả các client
+        private async Task SendClientListToAllAsync()
+        {
+            var clientListMessage = "/ClientList " + string.Join(", ", clients.Select(c => c.Username));
+            byte[] dataByte = Encoding.UTF8.GetBytes(clientListMessage);
+
+            var tasks = clients.Select(async clientInfo =>
+            {
+                try
+                {
+                    await clientInfo.SslStream.WriteAsync(dataByte, 0, dataByte.Length);
+                }
+                catch (Exception ex)
+                {
+                    showStatus("Client Disconnected: " + ex.Message);
+                    clientInfo.TcpClient.Close();
+                    clients = new ConcurrentBag<ClientInfo>(clients.Where(c => c != clientInfo));
+                }
+            });
+
+            await Task.WhenAll(tasks);
+        }
+
 
 
 
