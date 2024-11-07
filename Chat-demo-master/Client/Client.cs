@@ -115,4 +115,36 @@ namespace Client
                 }
             }
         }
+        //Nhận tin nhắn 
+        private async Task ReceiveMessagesAsync(SslStream sslStream)
+        {
+            byte[] buffer = new byte[1024];
+
+            try
+            {
+                while (true)
+                {
+                    int bytesRead = await sslStream.ReadAsync(buffer, 0, buffer.Length);
+                    if (bytesRead == 0) break;
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+
+                    if (message.StartsWith("/ClientList"))
+                    {
+                        string userList = message.Substring("/ClientList".Length).Trim();
+                        string[] users = userList.Split(new[] { ", " }, StringSplitOptions.None);
+                        UpdateUserList(users);
+                    }
+                    else
+                    {
+                        ShowMessage(message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                showStatus($"Mất kết nối: {ex.Message}");
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
     }
