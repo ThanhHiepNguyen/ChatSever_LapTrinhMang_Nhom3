@@ -80,3 +80,4 @@ C:\Users\145NTMK\Downloads\ltrinhMang\Chat-demo-master\Chat-demo-master\Server\o
 C:\Users\145NTMK\Downloads\ltrinhMang\Chat-demo-master\Chat-demo-master\Server\obj\Debug\net8.0-windows\Server.pdb
 C:\Users\145NTMK\Downloads\ltrinhMang\Chat-demo-master\Chat-demo-master\Server\obj\Debug\net8.0-windows\Server.genruntimeconfig.cache
 C:\Users\145NTMK\Downloads\ltrinhMang\Chat-demo-master\Chat-demo-master\Server\obj\Debug\net8.0-windows\ref\Server.dll
+C:\Users\145NTMK\Downloads\ltrinhMang\Chat-demo-master\Chat-demo-master\Server\obj\Debug\net8.0-windows\Server.sourcelink.json

@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\Chat-demo-master\\Chat-demo-master\\Server\\Server.csproj",
+      "projectUniqueName": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\cc\\Chat-demo-master\\Server\\Server.csproj",
       "projectName": "Server",
-      "projectPath": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\Chat-demo-master\\Chat-demo-master\\Server\\Server.csproj",
+      "projectPath": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\cc\\Chat-demo-master\\Server\\Server.csproj",
       "packagesPath": "C:\\Users\\145NTMK\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\Chat-demo-master\\Chat-demo-master\\Server\\obj\\",
+      "outputPath": "C:\\Users\\145NTMK\\Downloads\\ltrinhMang\\cc\\Chat-demo-master\\Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\145NTMK\\AppData\\Roaming\\NuGet\\NuGet.Config",

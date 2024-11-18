@@ -14,54 +14,116 @@ namespace Server
 {
     public partial class Server : Form
     {
+        // Sử dụng lại ConcurrentBag thay vì ConcurrentDictionary
         private static ConcurrentBag<ClientInfo> clients = new ConcurrentBag<ClientInfo>();
         private TcpListener server;
         private byte[] message;
+        int port = 9999;
 
         public Server()
         {
             InitializeComponent();
         }
-        //Lấy ip address từ wifi
-        private void ShowWifiIPAddress()
-        {
-            StringBuilder wifiIP = new StringBuilder();
 
-            foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces())
+        // Hiển thị thông tin địa chỉ IP của server
+        //private void ShowLocalIPAddress()
+        //{
+        //    var host = Dns.GetHostEntry(Dns.GetHostName());
+
+        //    foreach (var ip in host.AddressList)
+        //    {
+        //        if (ip.AddressFamily == AddressFamily.InterNetwork)
+        //        {
+        //            if (txt_IPAddress.InvokeRequired)
+        //            {
+        //                txt_IPAddress.Invoke(new Action(() =>
+        //                    txt_IPAddress.Text = ip.ToString() + Environment.NewLine + txt_IPAddress.Text));
+        //            }
+        //            else
+        //            {
+        //                txt_IPAddress.Text = ip.ToString() + Environment.NewLine + txt_IPAddress.Text;
+        //            }
+        //        }
+        //    }
+        //}
+     
+    private void ShowWifiIPAddress()
+    {
+        StringBuilder wifiIP = new StringBuilder();
+
+        foreach (NetworkInterface netInterface in NetworkInterface.GetAllNetworkInterfaces())
+        {
+            // Kiểm tra nếu giao diện là Wi-Fi và đang kết nối
+            if (netInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 &&
+                netInterface.OperationalStatus == OperationalStatus.Up)
             {
-                // Kiểm tra nếu giao diện là Wi-Fi và đang kết nối
-                if (netInterface.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 &&
-                    netInterface.OperationalStatus == OperationalStatus.Up)
+                foreach (UnicastIPAddressInformation ip in netInterface.GetIPProperties().UnicastAddresses)
                 {
-                    foreach (UnicastIPAddressInformation ip in netInterface.GetIPProperties().UnicastAddresses)
+                    if (ip.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
                     {
-                        if (ip.Address.AddressFamily == AddressFamily.InterNetwork) // IPv4
-                        {
-                            wifiIP.AppendLine(ip.Address.ToString());
-                        }
+                        wifiIP.AppendLine(ip.Address.ToString());
                     }
                 }
             }
+        }
 
-            if (txt_IPAddress.InvokeRequired)
+        if (txt_IPAddress.InvokeRequired)
+        {
+            txt_IPAddress.Invoke(new Action(() =>
+                txt_IPAddress.Text = wifiIP.ToString()));
+        }
+        else
+        {
+            txt_IPAddress.Text = wifiIP.ToString();
+        }
+    }
+
+        private void StartBroadcast()
+        {
+            UdpClient udpClient = new UdpClient();
+            udpClient.EnableBroadcast = true; // Cho phép broadcast
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Broadcast, 8888); // Port 8888 dành cho UDP Broadcast
+
+            while (true)
             {
-                txt_IPAddress.Invoke(new Action(() =>
-                    txt_IPAddress.Text = wifiIP.ToString()));
-            }
-            else
-            {
-                txt_IPAddress.Text = wifiIP.ToString();
+                try
+                {
+                    // Lấy IP từ textbox trên Server
+                    string localIp = txt_IPAddress.Text.Trim();
+                    if (string.IsNullOrEmpty(localIp))
+                    {
+                        throw new Exception("Địa chỉ IP chưa được nhập trên Server.");
+                    }
+
+                    // Chuẩn bị thông tin IP và Port để gửi
+                    string message = $"IP:{localIp};PORT:{port}";
+                    byte[] data = Encoding.UTF8.GetBytes(message);
+
+                    // Gửi thông tin IP và Port qua Broadcast
+                    udpClient.Send(data, data.Length, endPoint);
+
+                    // Gửi mỗi 2 giây
+                    Thread.Sleep(2000);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Broadcast lỗi: " + ex.Message);
+                }
             }
         }
+
         // Khởi động server (không đồng bộ)
         public async Task Start_Server()
         {
-            int port = 9999;
+            
 
             server = new TcpListener(IPAddress.Any, port);
             server.Start();
             ShowWifiIPAddress();
             showStatus("Server đã khởi động...");
+            Thread broadcastThread = new Thread(new ThreadStart(StartBroadcast));
+            broadcastThread.IsBackground = true; // Để luồng tự dừng khi ứng dụng đóng
+            broadcastThread.Start();
 
             txt_Message.Enabled = true;
             btn_Send.Enabled = true;
@@ -272,6 +334,7 @@ namespace Server
                 txt_status.Text = message + Environment.NewLine + txt_status.Text;
             }
         }
+
         // Start server - Click
         private async void btn_StartServer_Click(object sender, EventArgs e)
         {
@@ -300,6 +363,8 @@ namespace Server
             txt_Message.Clear();
         }
     }
+
+    // Định nghĩa lớp ClientInfo để lưu trữ thông tin của mỗi client
     public class ClientInfo
     {
         public TcpClient TcpClient { get; set; }

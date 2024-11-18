@@ -49,6 +49,7 @@
             label6 = new Label();
             txt_status = new TextBox();
             panel3 = new Panel();
+            btnGetServerInfo_Click = new Button();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
@@ -92,6 +93,7 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.ControlLight;
+            panel1.Controls.Add(btnGetServerInfo_Click);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(btn_disconnect);
             panel1.Controls.Add(btn_connect);
@@ -273,6 +275,17 @@
             panel3.Size = new Size(199, 35);
             panel3.TabIndex = 10;
             // 
+            // btnGetServerInfo_Click
+            // 
+            btnGetServerInfo_Click.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnGetServerInfo_Click.Location = new Point(21, 434);
+            btnGetServerInfo_Click.Name = "btnGetServerInfo_Click";
+            btnGetServerInfo_Click.Size = new Size(84, 23);
+            btnGetServerInfo_Click.TabIndex = 12;
+            btnGetServerInfo_Click.Text = "Get IP, Port";
+            btnGetServerInfo_Click.UseVisualStyleBackColor = true;
+            btnGetServerInfo_Click.Click += btnGetServerInfo_Click_Click;
+            // 
             // Client
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -321,5 +334,6 @@
         private Panel panel3;
         private Label label4;
         private Label label6;
+        private Button btnGetServerInfo_Click;
     }
 }

@@ -93,6 +93,7 @@ namespace Client
                 MessageBox.Show($"Lỗi khi kết nối: {ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void Disconnect()
         {
             if (_client != null)
@@ -115,7 +116,7 @@ namespace Client
                 }
             }
         }
-        //Nhận tin nhắn 
+
         private async Task ReceiveMessagesAsync(SslStream sslStream)
         {
             byte[] buffer = new byte[1024];
@@ -153,6 +154,7 @@ namespace Client
             // Chấp nhận tất cả chứng chỉ, bạn có thể thay đổi tùy theo nhu cầu
             return true;
         }
+
         private void UpdateUserList(string[] users)
         {
             InvokeIfRequired(listbox_User, () =>
@@ -167,6 +169,7 @@ namespace Client
                 }
             });
         }
+
         private void ShowMessage(string message)
         {
             InvokeIfRequired(listbox_result, () => listbox_result.Items.Add(message));
@@ -188,6 +191,7 @@ namespace Client
                 action();
             }
         }
+
         private async void btn_Send_Click(object sender, EventArgs e)
         {
             if (_client == null || !_client.Connected)
@@ -221,6 +225,7 @@ namespace Client
                 MessageBox.Show("Vui lòng nhập tin nhắn trước khi gửi", "Thông báo *_*", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private async void btn_connect_Click(object sender, EventArgs e)
         {
             await Connect();
@@ -245,6 +250,34 @@ namespace Client
             {
                 e.SuppressKeyPress = true; // Ngăn chặn tiếng "ting" khi nhấn Enter
                 btn_Send_Click(sender, e);
+            }
+        }
+
+        private void btnGetServerInfo_Click_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Lắng nghe Broadcast từ Server
+                UdpClient udpClient = new UdpClient(8888); // Cùng port với Server Broadcast
+                IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                udpClient.Client.ReceiveTimeout = 3000;
+
+                // Nhận dữ liệu
+                byte[] data = udpClient.Receive(ref remoteEndPoint);
+                string message = Encoding.UTF8.GetString(data);
+
+                // Phân tích dữ liệu nhận được
+                string[] serverInfo = message.Split(';');
+                txt_IPAddress.Text = serverInfo[0].Split(':')[1]; // IP
+                txt_Port.Text = serverInfo[1].Split(':')[1];     // Port
+
+                MessageBox.Show("Đã nhận thông tin từ server!");
+
+                udpClient.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi nhận thông tin từ server: " + ex.Message);
             }
         }
     }
